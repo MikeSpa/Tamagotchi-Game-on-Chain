@@ -42,14 +42,16 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
-        string memory SVG = string(abi.encodePacked(SVGBase, emojiBase64[0]));
+        string memory SVGInitial = string(
+            abi.encodePacked(SVGBase, emojiBase64[0])
+        );
         idToAttributes[tokenId] = GotchiAttributes({
             gotchiIndex: tokenId,
             happiness: 100,
             hunger: 100,
             enrichment: 100,
             lastChecked: block.timestamp,
-            imageURI: SVG
+            imageURI: SVGInitial
         });
         ownerToId[msg.sender] = tokenId;
         _setTokenURI(tokenId, tokenURI(tokenId));
@@ -70,6 +72,36 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
         override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
-        return super.tokenURI(tokenId);
+        GotchiAttributes memory gotchiAttributes = idToAttributes[tokenId];
+
+        string memory strHappiness = Strings.toString(
+            gotchiAttributes.happiness
+        );
+        string memory strHunger = Strings.toString(gotchiAttributes.hunger);
+        string memory strEnrichment = Strings.toString(
+            gotchiAttributes.enrichment
+        );
+
+        string memory json = string(
+            abi.encodePacked(
+                '{"name": "Your Little Emoji Friend",',
+                '"description": "Keep your pet happy!",',
+                '"image": "',
+                gotchiAttributes.imageURI,
+                '",',
+                '"traits": [',
+                '{"trait_type": "Hunger","value": ',
+                strHunger,
+                '}, {"trait_type": "Enrichment", "value": ',
+                strEnrichment,
+                '}, {"trait_type": "Happiness","value": ',
+                strHappiness,
+                "}]",
+                "}"
+            )
+        );
+
+        string memory output = string(abi.encodePacked(json));
+        return output;
     }
 }
