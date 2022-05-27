@@ -57,6 +57,28 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
         _setTokenURI(tokenId, tokenURI(tokenId));
     }
 
+    //Returns the attributes of a token ID
+    function getStats(uint256 tokenId)
+        public
+        view
+        returns (
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            string memory
+        )
+    {
+        GotchiAttributes memory att = idToAttributes[tokenId];
+        return (
+            att.happiness,
+            att.hunger,
+            att.enrichment,
+            att.lastChecked,
+            att.imageURI
+        );
+    }
+
     // The following functions are overrides required by Solidity.
 
     function _burn(uint256 tokenId)
