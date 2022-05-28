@@ -27,7 +27,7 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
     struct GotchiAttributes {
         uint256 gotchiIndex;
         uint256 happiness;
-        uint256 hunger;
+        uint256 satiety;
         uint256 enrichment;
         uint256 lastChecked;
         string imageURI;
@@ -49,7 +49,7 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
         idToAttributes[tokenId] = GotchiAttributes({
             gotchiIndex: tokenId,
             happiness: 100,
-            hunger: 100,
+            satiety: 100,
             enrichment: 100,
             lastChecked: block.timestamp,
             imageURI: SVGInitial
@@ -73,7 +73,7 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
         GotchiAttributes memory att = idToAttributes[tokenId];
         return (
             att.happiness,
-            att.hunger,
+            att.satiety,
             att.enrichment,
             att.lastChecked,
             att.imageURI
@@ -96,13 +96,23 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
     }
 
     function passTime(uint256 tokenID) public {
-        idToAttributes[tokenID].hunger -= 10;
+        idToAttributes[tokenID].satiety -= 10;
         idToAttributes[tokenID].enrichment -= 10;
         idToAttributes[tokenID].happiness =
-            (idToAttributes[tokenID].hunger +
+            (idToAttributes[tokenID].satiety +
                 idToAttributes[tokenID].enrichment) /
             2;
         _updateURI(tokenID);
+    }
+
+    function feed() public {
+        uint256 _tokenId = ownerToId[msg.sender];
+        idToAttributes[_tokenId].satiety = 100;
+        idToAttributes[_tokenId].happiness =
+            (idToAttributes[_tokenId].satiety +
+                idToAttributes[_tokenId].enrichment) /
+            2;
+        _updateURI(_tokenId);
     }
 
     //update the URI based on the attributes
@@ -144,7 +154,7 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
         string memory strHappiness = Strings.toString(
             gotchiAttributes.happiness
         );
-        string memory strHunger = Strings.toString(gotchiAttributes.hunger);
+        string memory strSatiety = Strings.toString(gotchiAttributes.satiety);
         string memory strEnrichment = Strings.toString(
             gotchiAttributes.enrichment
         );
@@ -157,8 +167,8 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
                 gotchiAttributes.imageURI,
                 '",',
                 '"traits": [',
-                '{"trait_type": "Hunger","value": ',
-                strHunger,
+                '{"trait_type": "Satiety","value": ',
+                strSatiety,
                 '}, {"trait_type": "Enrichment", "value": ',
                 strEnrichment,
                 '}, {"trait_type": "Happiness","value": ',

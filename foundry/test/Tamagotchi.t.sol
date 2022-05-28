@@ -25,13 +25,13 @@ contract TamagotchiTest is Test {
     function testURI() public {
         (
             uint256 happiness,
-            uint256 hunger,
+            uint256 satiety,
             uint256 enrichment,
             uint256 lastChecked,
 
         ) = tg.getStats(0);
-        assertEq(happiness, (hunger + enrichment) / 2);
-        assertEq(hunger, 100);
+        assertEq(happiness, (satiety + enrichment) / 2);
+        assertEq(satiety, 100);
         assertEq(enrichment, 100);
         assertEq(lastChecked, block.timestamp);
     }
@@ -40,13 +40,13 @@ contract TamagotchiTest is Test {
     function testMyGotchiURI() public {
         (
             uint256 happiness,
-            uint256 hunger,
+            uint256 satiety,
             uint256 enrichment,
             uint256 lastChecked,
 
         ) = tg.getMyGotchiStats();
-        assertEq(happiness, (hunger + enrichment) / 2);
-        assertEq(hunger, 100);
+        assertEq(happiness, (satiety + enrichment) / 2);
+        assertEq(satiety, 100);
         assertEq(enrichment, 100);
         assertEq(lastChecked, block.timestamp);
     }
@@ -54,14 +54,24 @@ contract TamagotchiTest is Test {
     //Test passing time
     function testPassTime() public {
         tg.passTime(0);
-        (uint256 happiness, uint256 hunger, uint256 enrichment, , ) = tg
+        (uint256 happiness, uint256 satiety, uint256 enrichment, , ) = tg
             .getStats(0);
-        assertEq(hunger, 90);
+        assertEq(satiety, 90);
         assertEq(enrichment, 90);
         assertEq(happiness, (90 + 90) / 2);
     }
 
     //Test feed
+    function testFeed() public {
+        tg.passTime(0);
+        (uint256 happiness, uint256 satiety, , , ) = tg.getStats(0);
+        assertEq(satiety, 90);
+        assertEq(happiness, (90 + 90) / 2);
+        tg.feed();
+        (happiness, satiety, , , ) = tg.getStats(0);
+        assertEq(satiety, 100);
+        assertEq(happiness, (100 + 90) / 2);
+    }
 
     //test play
 
