@@ -96,18 +96,26 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
     }
 
     function passTime(uint256 tokenID) public {
-        idToAttributes[tokenID].satiety -= 10;
-        idToAttributes[tokenID].enrichment -= 10;
-        idToAttributes[tokenID].happiness =
-            (idToAttributes[tokenID].satiety +
-                idToAttributes[tokenID].enrichment) /
-            2;
-        _updateURI(tokenID);
+        _updateAttributes(
+            tokenID,
+            idToAttributes[tokenID].satiety - 10,
+            idToAttributes[tokenID].enrichment - 10
+        );
     }
 
     function feed() public {
-        uint256 _tokenId = ownerToId[msg.sender];
-        idToAttributes[_tokenId].satiety = 100;
+        uint256 tokenId = ownerToId[msg.sender];
+        _updateAttributes(tokenId, 100, idToAttributes[tokenId].enrichment);
+    }
+
+    //Private function to update the attributes of a Gotchi
+    function _updateAttributes(
+        uint256 _tokenId,
+        uint256 _satiety,
+        uint256 _enrichment
+    ) private {
+        idToAttributes[_tokenId].satiety = _satiety;
+        idToAttributes[_tokenId].enrichment = _enrichment;
         idToAttributes[_tokenId].happiness =
             (idToAttributes[_tokenId].satiety +
                 idToAttributes[_tokenId].enrichment) /
