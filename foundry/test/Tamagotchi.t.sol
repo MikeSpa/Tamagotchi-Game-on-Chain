@@ -36,6 +36,21 @@ contract TamagotchiTest is Test {
         assertEq(lastChecked, block.timestamp);
     }
 
+    //Test URI for my Gotchi
+    function testMyGotchiURI() public {
+        (
+            uint256 happiness,
+            uint256 hunger,
+            uint256 enrichment,
+            uint256 lastChecked,
+
+        ) = tg.getMyGotchiStats();
+        assertEq(happiness, (hunger + enrichment) / 2);
+        assertEq(hunger, 100);
+        assertEq(enrichment, 100);
+        assertEq(lastChecked, block.timestamp);
+    }
+
     //Test passing time
 
     //Test feed
