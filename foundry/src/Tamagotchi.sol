@@ -37,6 +37,8 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
 
     mapping(uint256 => GotchiAttributes) public idToAttributes;
 
+    uint256 public interval = 100;
+
     constructor() ERC721("Tamagotchi", "TMGC") {}
 
     function safeMint(address _to) public onlyOwner {
@@ -116,6 +118,34 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
     function play() public {
         uint256 tokenId = ownerToId[msg.sender];
         _updateAttributes(tokenId, idToAttributes[tokenId].satiety, 100);
+    }
+
+    //  UPKEEP FUNCTION //
+
+    function checkUpkeep(
+        bytes calldata /* checkData */
+    )
+        external
+        view
+        returns (
+            bool upkeepNeeded /*,
+            bytes memory /* performData */
+        )
+    {
+        upkeepNeeded = (idToAttributes[0].happiness > 0 &&
+            (block.timestamp - idToAttributes[0].lastChecked) > interval);
+    }
+
+    function performUpkeep(
+        bytes calldata /* performData */
+    ) external {
+        if (
+            idToAttributes[0].happiness > 0 &&
+            ((block.timestamp - idToAttributes[0].lastChecked) > interval)
+        ) {
+            idToAttributes[0].lastChecked = block.timestamp;
+            passTime(0);
+        }
     }
 
     //  PRIVATE FUNCTION  //
