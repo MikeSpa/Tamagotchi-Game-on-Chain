@@ -39,10 +39,10 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
 
     constructor() ERC721("Tamagotchi", "TMGC") {}
 
-    function safeMint(address to) public onlyOwner {
+    function safeMint(address _to) public onlyOwner {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
+        _safeMint(_to, tokenId);
         string memory SVGInitial = string(
             abi.encodePacked(SVGBase, emojiBase64[0])
         );
@@ -59,7 +59,7 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
     }
 
     //Returns the attributes of a token ID
-    function getStats(uint256 tokenId)
+    function getStats(uint256 _tokenId)
         public
         view
         returns (
@@ -70,7 +70,7 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
             string memory
         )
     {
-        GotchiAttributes memory att = idToAttributes[tokenId];
+        GotchiAttributes memory att = idToAttributes[_tokenId];
         return (
             att.happiness,
             att.satiety,
@@ -95,11 +95,11 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
         return getStats(ownerToId[msg.sender]);
     }
 
-    function passTime(uint256 tokenID) public {
+    function passTime(uint256 _tokenId) public {
         _updateAttributes(
-            tokenID,
-            idToAttributes[tokenID].satiety - 10,
-            idToAttributes[tokenID].enrichment - 10
+            _tokenId,
+            idToAttributes[_tokenId].satiety - 10,
+            idToAttributes[_tokenId].enrichment - 10
         );
     }
 
@@ -112,6 +112,8 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
         uint256 tokenId = ownerToId[msg.sender];
         _updateAttributes(tokenId, idToAttributes[tokenId].satiety, 100);
     }
+
+    //  PRIVATE FUNCTION  //
 
     //Private function to update the attributes of a Gotchi
     function _updateAttributes(
@@ -129,40 +131,40 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
     }
 
     //update the URI based on the attributes
-    function _updateURI(uint256 tokenId) private {
+    function _updateURI(uint256 _tokenId) private {
         string memory emojiB64 = emojiBase64[0];
-        if (idToAttributes[tokenId].happiness == 100) {
+        if (idToAttributes[_tokenId].happiness == 100) {
             emojiB64 = emojiBase64[0];
-        } else if (idToAttributes[tokenId].happiness > 66) {
+        } else if (idToAttributes[_tokenId].happiness > 66) {
             emojiB64 = emojiBase64[1];
-        } else if (idToAttributes[tokenId].happiness > 33) {
+        } else if (idToAttributes[_tokenId].happiness > 33) {
             emojiB64 = emojiBase64[2];
-        } else if (idToAttributes[tokenId].happiness > 0) {
+        } else if (idToAttributes[_tokenId].happiness > 0) {
             emojiB64 = emojiBase64[3];
-        } else if (idToAttributes[tokenId].happiness == 0) {
+        } else if (idToAttributes[_tokenId].happiness == 0) {
             emojiB64 = emojiBase64[4];
         }
         string memory newSVG = string(abi.encodePacked(SVGBase, emojiB64));
-        idToAttributes[tokenId].imageURI = newSVG;
-        _setTokenURI(tokenId, tokenURI(tokenId));
+        idToAttributes[_tokenId].imageURI = newSVG;
+        _setTokenURI(_tokenId, tokenURI(_tokenId));
     }
 
     // The following functions are overrides required by Solidity.
 
-    function _burn(uint256 tokenId)
+    function _burn(uint256 _tokenId)
         internal
         override(ERC721, ERC721URIStorage)
     {
-        super._burn(tokenId);
+        super._burn(_tokenId);
     }
 
-    function tokenURI(uint256 tokenId)
+    function tokenURI(uint256 _tokenId)
         public
         view
         override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
-        GotchiAttributes memory gotchiAttributes = idToAttributes[tokenId];
+        GotchiAttributes memory gotchiAttributes = idToAttributes[_tokenId];
 
         string memory strHappiness = Strings.toString(
             gotchiAttributes.happiness
