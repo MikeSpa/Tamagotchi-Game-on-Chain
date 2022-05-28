@@ -96,11 +96,16 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
     }
 
     function passTime(uint256 _tokenId) public {
-        _updateAttributes(
-            _tokenId,
-            idToAttributes[_tokenId].satiety - 10,
-            idToAttributes[_tokenId].enrichment - 10
-        );
+        uint256 newSatiety = 0;
+        uint256 newEnrichment = 0;
+        //protect from underflow errors
+        if (idToAttributes[_tokenId].satiety >= 10) {
+            newSatiety = idToAttributes[_tokenId].satiety - 10;
+        }
+        if (idToAttributes[_tokenId].enrichment >= 10) {
+            newEnrichment = idToAttributes[_tokenId].enrichment - 10;
+        }
+        _updateAttributes(_tokenId, newSatiety, newEnrichment);
     }
 
     function feed() public {

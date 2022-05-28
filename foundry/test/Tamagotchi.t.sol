@@ -86,6 +86,69 @@ contract TamagotchiTest is Test {
     }
 
     //test svg image
+    function testImgURI() public {
+        (, , , , string memory tokenURI) = tg.getStats(0);
+        string memory initURI = tokenURI;
+
+        // second state (90)
+        tg.passTime(0);
+        (, , , , tokenURI) = tg.getStats(0);
+        string memory secondURI = tokenURI;
+        assertTrue(
+            keccak256(abi.encodePacked(initURI)) !=
+                keccak256(abi.encodePacked(tokenURI))
+        );
+        // still second state (80)
+        tg.passTime(0);
+        (, , , , tokenURI) = tg.getStats(0);
+
+        assertTrue(
+            keccak256(abi.encodePacked(tokenURI)) ==
+                keccak256(abi.encodePacked(secondURI))
+        );
+        // 3rd state (60)
+        tg.passTime(0);
+        tg.passTime(0);
+        (, , , , tokenURI) = tg.getStats(0);
+        string memory thirdURI = tokenURI;
+        assertTrue(
+            keccak256(abi.encodePacked(secondURI)) !=
+                keccak256(abi.encodePacked(thirdURI))
+        );
+        // 4th state (30)
+        tg.passTime(0);
+        tg.passTime(0);
+        tg.passTime(0);
+        (, , , , tokenURI) = tg.getStats(0);
+        string memory fourthURI = tokenURI;
+        assertTrue(
+            keccak256(abi.encodePacked(fourthURI)) !=
+                keccak256(abi.encodePacked(thirdURI))
+        );
+        // still 4th state (10)
+        tg.passTime(0);
+        tg.passTime(0);
+        (, , , , tokenURI) = tg.getStats(0);
+        assertTrue(
+            keccak256(abi.encodePacked(fourthURI)) ==
+                keccak256(abi.encodePacked(tokenURI))
+        );
+        // 5th state (0)
+        tg.passTime(0);
+        (, , , , tokenURI) = tg.getStats(0);
+        string memory fifthURI = tokenURI;
+        assertTrue(
+            keccak256(abi.encodePacked(fourthURI)) !=
+                keccak256(abi.encodePacked(fifthURI))
+        );
+        // still 5th state (0)
+        tg.passTime(0);
+        (, , , , tokenURI) = tg.getStats(0);
+        assertTrue(
+            keccak256(abi.encodePacked(tokenURI)) ==
+                keccak256(abi.encodePacked(fifthURI))
+        );
+    }
 
     //Check upkeep
 
