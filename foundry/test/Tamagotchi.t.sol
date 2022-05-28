@@ -52,6 +52,14 @@ contract TamagotchiTest is Test {
     }
 
     //Test passing time
+    function testPassTime() public {
+        tg.passTime(0);
+        (uint256 happiness, uint256 hunger, uint256 enrichment, , ) = tg
+            .getStats(0);
+        assertEq(hunger, 90);
+        assertEq(enrichment, 90);
+        assertEq(happiness, (90 + 90) / 2);
+    }
 
     //Test feed
 
