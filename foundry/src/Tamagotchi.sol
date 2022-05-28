@@ -108,6 +108,11 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
         _updateAttributes(tokenId, 100, idToAttributes[tokenId].enrichment);
     }
 
+    function play() public {
+        uint256 tokenId = ownerToId[msg.sender];
+        _updateAttributes(tokenId, idToAttributes[tokenId].satiety, 100);
+    }
+
     //Private function to update the attributes of a Gotchi
     function _updateAttributes(
         uint256 _tokenId,

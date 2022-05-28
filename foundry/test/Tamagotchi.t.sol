@@ -74,6 +74,16 @@ contract TamagotchiTest is Test {
     }
 
     //test play
+    function testPlay() public {
+        tg.passTime(0);
+        (uint256 happiness, , uint256 enrichment, , ) = tg.getStats(0);
+        assertEq(enrichment, 90);
+        assertEq(happiness, (90 + 90) / 2);
+        tg.play();
+        (happiness, , enrichment, , ) = tg.getStats(0);
+        assertEq(enrichment, 100);
+        assertEq(happiness, (90 + 100) / 2);
+    }
 
     //test svg image
 
