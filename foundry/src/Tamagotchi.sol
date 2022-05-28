@@ -48,7 +48,9 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
 
     uint256 public interval = 100;
 
-    constructor() ERC721("Tamagotchi", "TMGC") {}
+    constructor() ERC721("Tamagotchi", "TMGC") {
+        // safeMint(msg.sender);
+    }
 
     function safeMint(address _to) public onlyOwner {
         uint256 tokenId = _tokenIdCounter.current();
