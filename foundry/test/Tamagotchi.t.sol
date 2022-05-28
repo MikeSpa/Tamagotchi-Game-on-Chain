@@ -4,8 +4,13 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "../src/Tamagotchi.sol";
 
+interface CheatCodes {
+    function warp(uint256) external;
+}
+
 contract TamagotchiTest is Test {
     Tamagotchi public tg;
+    CheatCodes constant cheats = CheatCodes(HEVM_ADDRESS);
 
     // Run before every test
     function setUp() public {
@@ -151,6 +156,42 @@ contract TamagotchiTest is Test {
     }
 
     //Check upkeep
+    function testCheckUpkeep() public {
+        bytes memory data = "";
+        bool upkeepNeeded = tg.checkUpkeep(data);
+        assertFalse(upkeepNeeded);
+        cheats.warp(block.timestamp + 50);
+        (upkeepNeeded) = tg.checkUpkeep(data);
+        assertFalse(upkeepNeeded);
+        cheats.warp(block.timestamp + 51); //101 total
+        (upkeepNeeded) = tg.checkUpkeep(data);
+        assertTrue(upkeepNeeded);
+    }
 
     //Perform upkeep
+    function testPerformUpkeep() public {
+        bytes memory data = "";
+        //nothing should happen
+        tg.performUpkeep(data);
+        (
+            uint256 happiness,
+            uint256 satiety,
+            uint256 enrichment,
+            uint256 lastChecked,
+
+        ) = tg.getStats(0);
+        assertEq(satiety, 100);
+        assertEq(enrichment, 100);
+        assertEq(happiness, 100);
+        assertEq(lastChecked, block.timestamp);
+
+        //passTime() should be called
+        cheats.warp(block.timestamp + 101);
+        tg.performUpkeep(data);
+        (happiness, satiety, enrichment, lastChecked, ) = tg.getStats(0);
+        assertEq(satiety, 90);
+        assertEq(enrichment, 90);
+        assertEq(happiness, (90 + 90) / 2);
+        assertEq(lastChecked, block.timestamp);
+    }
 }
