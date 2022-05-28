@@ -25,13 +25,22 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
 
     //Attributes
     struct GotchiAttributes {
-        uint256 gotchiIndex;
+        uint256 tokenId;
         uint256 happiness;
         uint256 satiety;
         uint256 enrichment;
         uint256 lastChecked;
         string imageURI;
     }
+
+    event TamagotchiUpdate(
+        uint256 indexed tokenId,
+        uint256 happiness,
+        uint256 satiety,
+        uint256 enrichment,
+        uint256 checked,
+        string imageURI
+    );
 
     mapping(address => uint256) public ownerToId;
 
@@ -49,7 +58,7 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
             abi.encodePacked(SVGBase, emojiBase64[0])
         );
         idToAttributes[tokenId] = GotchiAttributes({
-            gotchiIndex: tokenId,
+            tokenId: tokenId,
             happiness: 100,
             satiety: 100,
             enrichment: 100,
@@ -182,6 +191,18 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
         string memory newSVG = string(abi.encodePacked(SVGBase, emojiB64));
         idToAttributes[_tokenId].imageURI = newSVG;
         _setTokenURI(_tokenId, tokenURI(_tokenId));
+        _emitTamagotchiUpdate(_tokenId);
+    }
+
+    function _emitTamagotchiUpdate(uint256 _tokenId) private {
+        emit TamagotchiUpdate(
+            _tokenId,
+            idToAttributes[_tokenId].happiness,
+            idToAttributes[_tokenId].satiety,
+            idToAttributes[_tokenId].enrichment,
+            idToAttributes[_tokenId].lastChecked,
+            idToAttributes[_tokenId].imageURI
+        );
     }
 
     // The following functions are overrides required by Solidity.
