@@ -11,6 +11,9 @@ Tamagotchi contract deploy on mumbai testnet for the polygon blockchain at [0x63
 
 - Once the Tamagotchi contract is complete, you can deploy it on a testnet (or mainnet). Use deploy.sh script to deploy to mumbai.
 - Then register with [Upkeep](https://keepers.chain.link/) and fund it with LINK.
+- Install SvelteKit for the front end `npm init svelte; npm install ethers`
+- Run the server locally with `npm run dev -- --open`
+
 
 ---
 
