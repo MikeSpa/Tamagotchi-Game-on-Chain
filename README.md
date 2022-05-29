@@ -13,8 +13,12 @@ Tamagotchi contract deploy on mumbai testnet for the polygon blockchain at [0x63
 - Then register with [Upkeep](https://keepers.chain.link/) and fund it with LINK.
 - Install SvelteKit for the front end `npm init svelte; npm install ethers`
 - Run the server locally with `npm run dev -- --open`
+- Add the front end code to connect your wallet and fetch the information from the contract on Mumbai
+- You can know interact with your Tamagotchi directly from the browser
 
 
 ---
+![Tamagotchi on Browser](svelte/screenshot/Tamagotchi_on_browner.png)
+
 
 ![Tamagotchi on Opensea](foundry/screenshot/Tamagotchi_NFT_opensea.png)
