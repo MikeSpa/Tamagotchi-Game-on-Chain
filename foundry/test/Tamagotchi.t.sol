@@ -15,15 +15,25 @@ contract TamagotchiTest is Test {
     // Run before every test
     function setUp() public {
         tg = new Tamagotchi();
-        address addy = 0xf74Bdac96015b303a6ac9dcD7254be05C9fA3ad4;
-        tg.safeMint(addy);
+    }
+
+    //We need this function so our test contract can receive a NFT when we safeMint()
+    function onERC721Received(
+        address,
+        address,
+        uint256 _tokenId,
+        bytes memory
+    ) external returns (bytes4) {
+        return
+            bytes4(
+                keccak256("onERC721Received(address,address,uint256,bytes)")
+            );
     }
 
     //Mint NFT
     function testMint() public {
-        address addy = 0xf74Bdac96015b303a6ac9dcD7254be05C9fA3ad4;
         address owner = tg.ownerOf(0);
-        assertEq(addy, owner);
+        assertEq(address(this), owner);
     }
 
     //Test URI
