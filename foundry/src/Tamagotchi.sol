@@ -47,16 +47,21 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
     mapping(uint256 => GotchiAttributes) public idToAttributes;
 
     uint256 public interval = 100;
+    uint256 public mintPrice = 0.1 ether;
 
-    constructor() ERC721("Tamagotchi", "TMGC") {
+    constructor() payable ERC721("Tamagotchi", "TMGC") {
         //Here we mint an NFT directly to the deployer, the deployer can then mint NFT for other addresses
-        safeMint(msg.sender);
+        safeMint();
     }
 
-    function safeMint(address _to) public onlyOwner {
+    function safeMint() public payable {
+        require(
+            msg.sender == owner() || msg.value >= mintPrice,
+            "Need to send more ether"
+        );
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
-        _safeMint(_to, tokenId);
+        _safeMint(msg.sender, tokenId);
         string memory SVGInitial = string(
             abi.encodePacked(SVGBase, emojiBase64[0])
         );
@@ -254,5 +259,9 @@ contract Tamagotchi is ERC721, ERC721URIStorage, Ownable {
 
         string memory output = string(abi.encodePacked(json));
         return output;
+    }
+
+    function withdraw(address payable _to) public onlyOwner {
+        _to.transfer(balanceOf(address(this)));
     }
 }

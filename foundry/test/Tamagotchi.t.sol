@@ -8,22 +8,29 @@ interface CheatCodes {
     function warp(uint256) external;
 }
 
+// contract NotOwnerTest is Test {
+//     function testOwner() public {
+//         TamagotchiTest.tg().safeMint(address(this));
+//     }
+// }
+
 contract TamagotchiTest is Test {
     Tamagotchi public tg;
     CheatCodes constant cheats = CheatCodes(HEVM_ADDRESS);
 
     // Run before every test
     function setUp() public {
-        tg = new Tamagotchi();
+        // tg = new Tamagotchi{value: 0.1 ether}();
+        tg = new Tamagotchi(); //free for owner
     }
 
     //We need this function so our test contract can receive a NFT when we safeMint()
     function onERC721Received(
         address,
         address,
-        uint256 _tokenId,
+        uint256,
         bytes memory
-    ) external returns (bytes4) {
+    ) external pure returns (bytes4) {
         return
             bytes4(
                 keccak256("onERC721Received(address,address,uint256,bytes)")
